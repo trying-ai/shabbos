@@ -1,0 +1,1137 @@
+<!DOCTYPE html>
+
+<!-- Injection By NetFree -->
+<script src="//wfapi.internal.netfree.link/wifree/go-install-wifree" type="text/javascript" async nonce="zLZOlvhR1_z8ftBtGilcEw" ></script>
+
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shabbat Meals Directory</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.5.0/css/flag-icon.min.css">
+    <style>
+        :root {
+            /* Royal-Italian colors */
+            --primary-color: #2C3E50;    /* Royal dark blue */
+            --secondary-color: #34495E;   /* Noble blue-gray */
+            --accent-color: #B8860B;      /* Royal gold */
+            --gold-gradient: linear-gradient(135deg, #DAA520, #B8860B);
+            --text-color: #2C3E50;
+            --light-bg: #F5F5F5;
+            --royal-shadow: 0 8px 32px rgba(184, 134, 11, 0.15);
+        }
+
+        body {
+            font-family: 'Cormorant Garamond', 'Times New Roman', serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            min-height: 100vh;
+            color: var(--light-bg);
+        }
+
+        .navbar {
+            background: rgba(255, 255, 255, 0.97);
+            border-bottom: 2px solid var(--accent-color);
+            padding: 1.5rem;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .navbar-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .navbar h1 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 2.5rem;
+            color: var(--primary-color);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin: 0;
+            background: linear-gradient(45deg, var(--accent-color), #FFE5CA);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 700;
+        }
+
+        .view-toggle {
+            background: var(--gold-gradient);
+            font-family: 'Cormorant Garamond', serif;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: var(--royal-shadow);
+        }
+
+        .view-toggle:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(246, 177, 122, 0.4);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+            margin-bottom: 4rem;
+        }
+
+        .filters {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(15px);
+            padding: 1.5rem;
+            border-radius: 16px;
+            margin-bottom: 2rem;
+            display: flex;
+            gap: 1rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            justify-content: space-between;
+        }
+
+        .filter-select {
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--primary-color);
+            padding: 0.8rem 1.2rem;
+            border-radius: 12px;
+            flex: 1;
+            max-width: 500px;
+            min-width: 200px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            cursor: pointer;
+            text-align: center;
+        }
+
+        .filter-select option {
+            background: white;
+            color: var(--primary-color);
+            padding: 10px;
+            text-align: center;
+        }
+
+        .host-card {
+            background: rgba(255, 255, 255, 0.97);
+            color: var(--text-color);
+            box-shadow: var(--royal-shadow);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid var(--accent-color);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .host-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.05));
+            pointer-events: none;
+        }
+
+        .host-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .host-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .host-name {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--light-bg);
+        }
+
+        .meal-type {
+            background: var(--gold-gradient);
+            color: white;
+            font-family: 'Cormorant Garamond', serif;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 0.5rem 1.2rem;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .host-details {
+            color: var(--light-bg);
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+        }
+
+        .host-details div {
+            margin: 0.5rem 0;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .host-notes {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 1rem;
+            border-radius: 12px;
+            margin-top: 1rem;
+            font-size: 0.95rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .admin-controls {
+            position: absolute;
+            top: 1rem;
+            left: 1rem;
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .edit-btn, .delete-btn {
+            padding: 0.6rem;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+        }
+
+        .edit-btn {
+            background: rgba(255, 215, 0, 0.2);
+            color: #FFD700;
+        }
+
+        .delete-btn {
+            background: rgba(255, 68, 68, 0.2);
+            color: #FF4444;
+        }
+
+        .edit-btn:hover, .delete-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .admin-login, .admin-logout {
+            position: fixed;
+            bottom: 2rem;
+            left: 2rem;
+            padding: 0.8rem 1.5rem;
+            background: var(--accent-color);
+            border-radius: 50px;
+            cursor: pointer;
+            border: none;
+            color: var(--primary-color);
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .admin-login:hover, .admin-logout:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(247, 182, 51, 0.3);
+        }
+
+        /* עיצוב הטופס */
+        .add-host-view {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(15px);
+            border-radius: 20px;
+            padding: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+            width: 100%;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.8rem;
+            color: var(--light-bg);
+            font-weight: 500;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            color: var(--primary-color);
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            box-sizing: border-box;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 2px rgba(246, 177, 122, 0.2);
+        }
+
+        .submit-btn {
+            background: linear-gradient(135deg, var(--secondary-color), var(--accent-color));
+            color: white;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(246, 177, 122, 0.3);
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(246, 177, 122, 0.4);
+        }
+
+        select {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+            background-size: 1em;
+            padding-right: 2.5rem;
+        }
+
+        select option {
+            background: white;
+            color: var(--primary-color);
+            padding: 10px;
+        }
+
+        /* הוספת מראה אחיד לכל המשבצות בטופס */
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        /* הוספת מדיה קוורי למסכים קטנים */
+        @media (max-width: 768px) {
+            .filters {
+                flex-direction: column;
+            }
+            
+            .filter-select {
+                width: 100%;
+                max-width: none;
+            }
+        }
+
+        .host-list-view {
+            display: block;
+        }
+
+        .add-host-view {
+            display: none;
+        }
+
+        /* הוספ כפתור החלפת שפה */
+        .language-toggle {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+            margin-left: 1rem;
+        }
+
+        .lang-btn {
+            background: transparent;
+            border: 1px solid var(--accent-color);
+            color: var(--accent-color);
+            font-family: 'Cormorant Garamond', serif;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 0.5rem 0.8rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .lang-btn.active {
+            background: var(--gold-gradient);
+            color: white;
+            transform: scale(1.05);
+        }
+
+        .lang-btn:hover {
+            background: var(--gold-gradient);
+            color: white;
+        }
+
+        footer {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            text-align: center;
+            padding: 1rem;
+            background: var(--primary-color);
+            color: var(--accent-color);
+            font-family: 'Cormorant Garamond', serif;
+            letter-spacing: 1px;
+            border-top: 2px solid var(--accent-color);
+            z-index: 999;
+        }
+
+        .admin-login {
+            position: fixed;
+            bottom: 2rem;
+            left: 2rem;
+            background: var(--gold-gradient);
+            color: white;
+            font-family: 'Cormorant Garamond', serif;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: var(--royal-shadow);
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .admin-login:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(184, 134, 11, 0.3);
+        }
+
+        .hosts-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: var(--royal-shadow);
+            margin: 2rem 0;
+            table-layout: fixed;
+        }
+
+        .hosts-table th {
+            padding: 1.5rem;
+            text-align: center;
+            font-family: 'Cormorant Garamond', serif;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            background: var(--gold-gradient);
+            color: white;
+        }
+
+        .hosts-table th:nth-child(5) { width: 20%; }  /* HOST NAME */
+        .hosts-table th:nth-child(4) { width: 25%; }  /* ADDRESS */
+        .hosts-table th:nth-child(3) { width: 15%; }  /* PHONE */
+        .hosts-table th:nth-child(2) { width: 22%; }  /* NOTES */
+        .hosts-table th:nth-child(1) { width: 18%; }  /* REVIEWS */
+
+        .hosts-table td {
+            padding: 1.2rem 1.5rem;
+            text-align: center;
+            border-bottom: 1px solid rgba(184, 134, 11, 0.1);
+            color: var(--text-color);
+            font-size: 1rem;
+        }
+
+        .hosts-table tbody tr {
+            transition: all 0.3s ease;
+        }
+
+        .hosts-table tbody tr:hover {
+            background: rgba(184, 134, 11, 0.05);
+        }
+
+        .hosts-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* סגנון לכפתור הביקורות */
+        .review-btn {
+            background: var(--gold-gradient);
+            color: white;
+            border: none;
+            padding: 0.5rem 1.2rem;
+            border-radius: 50px;
+            cursor: pointer;
+            font-family: 'Cormorant Garamond', serif;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+            min-width: 150px;
+        }
+
+        .review-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(184, 134, 11, 0.2);
+        }
+
+        /* הסרת הסגנונות הקשורים לשורת הסינון */
+        .filters {
+            display: none;
+        }
+
+        /* עדכון המרווח העליון של הטבלה */
+        .container {
+            margin-top: 1rem;
+        }
+
+        /* הסרת הרקע הכהה */
+        body {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        }
+
+        /* סגנון כפתור Contact */
+        .contact-btn {
+            background: transparent;
+            border: 1px solid var(--accent-color);
+            color: var(--accent-color);
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            cursor: pointer;
+            font-family: 'Cormorant Garamond', serif;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 0.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .contact-btn:hover {
+            background: var(--gold-gradient);
+            color: white;
+            border-color: transparent;
+        }
+
+        /* עדכון סגנון המודל */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            position: relative;
+            width: 90%;
+            max-width: 500px;
+            margin: 0 auto;
+            animation: modalSlide 0.3s ease;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 24px;
+            cursor: pointer;
+            color: #666;
+        }
+
+        .close-btn:hover {
+            color: #000;
+        }
+
+        @keyframes modalSlide {
+            from {
+                transform: translateY(-30px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal h2 {
+            color: var(--primary-color);
+            font-family: 'Cormorant Garamond', serif;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-align: center;
+            margin-bottom: 2rem;
+            background: var(--gold-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .contact-info {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .contact-item {
+            display: flex;
+            justify-content: center;
+            padding: 1rem;
+            background: rgba(184, 134, 11, 0.05);
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .contact-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(184, 134, 11, 0.1);
+        }
+
+        .contact-item a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-size: 1.1rem;
+            transition: color 0.3s ease;
+            font-family: 'Cormorant Garamond', serif;
+        }
+
+        .contact-item a:hover {
+            color: var(--accent-color);
+        }
+
+        .close-btn {
+            position: absolute;
+            right: 1.5rem;
+            top: 1rem;
+            font-size: 1.5rem;
+            color: var(--primary-color);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .close-btn:hover {
+            color: var(--accent-color);
+            transform: rotate(90deg);
+        }
+
+        /* סגנונות למערכת הביקורות */
+        .reviews-list {
+            margin: 2rem 0;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .review-item {
+            background: white;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(184, 134, 11, 0.2);
+        }
+
+        .review-text {
+            color: #333;
+            font-size: 1rem;
+            line-height: 1.5;
+            margin: 0.5rem 0;
+        }
+
+        .stars {
+            color: #DAA520; /* צבע זהב כהה יותר לכוכבים */
+            font-size: 1.2rem;
+            margin-bottom: 0.8rem;
+        }
+
+        /* עיצוב טופס הוספת ביקורת */
+        .add-review {
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(184, 134, 11, 0.2);
+        }
+
+        .add-review h3 {
+            color: #2C3E50;
+            margin-bottom: 1rem;
+            font-family: 'Cormorant Garamond', serif;
+        }
+
+        #reviewText {
+            width: 100%;
+            min-height: 100px;
+            padding: 1rem;
+            margin: 1rem 0;
+            border: 1px solid #DAA520;
+            border-radius: 8px;
+            font-size: 1rem;
+            color: #333;
+            background: white;
+        }
+
+        .star-rating {
+            font-size: 2rem;
+            color: #DAA520;
+            margin: 1rem 0;
+            cursor: pointer;
+        }
+
+        .star-rating .star {
+            margin: 0 0.2rem;
+        }
+
+        .submit-review {
+            background: #DAA520;
+            color: white;
+            border: none;
+            padding: 0.8rem 2rem;
+            border-radius: 50px;
+            cursor: pointer;
+            font-family: 'Cormorant Garamond', serif;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            margin-top: 1rem;
+        }
+
+        .submit-review:hover {
+            background: #B8860B;
+            transform: translateY(-2px);
+        }
+
+        /* עיצוב המודל עצמו */
+        .modal-content {
+            background: #F5F5F5;
+            padding: 2rem;
+            border-radius: 15px;
+            max-width: 600px;
+            width: 90%;
+            margin: 2rem auto;
+        }
+
+        .modal-content h2 {
+            color: #2C3E50;
+            font-family: 'Cormorant Garamond', serif;
+            text-align: center;
+            margin-bottom: 2rem;
+            font-size: 1.8rem;
+        }
+
+        .reviews-list {
+            max-height: 400px;
+            overflow-y: auto;
+            padding-right: 1rem;
+        }
+
+        .admin-btn {
+            background: transparent;
+            border: 1px solid var(--accent-color);
+            color: var(--accent-color);
+            padding: 0.3rem 0.8rem;
+            margin: 0 0.2rem;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: all 0.3s ease;
+        }
+
+        .admin-btn:hover {
+            background: var(--gold-gradient);
+            color: white;
+            border-color: transparent;
+        }
+
+        .admin-btn.delete:hover {
+            background: linear-gradient(135deg, #ff4444, #cc0000);
+        }
+
+        /* סגנונות חדשים לתאריך */
+        .review-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.8rem;
+        }
+
+        .review-date {
+            color: #666;
+            font-size: 0.9rem;
+            font-style: italic;
+        }
+
+        .stars {
+            color: #DAA520;
+            font-size: 1.2rem;
+        }
+
+        /* כשהמודל פתוח */
+        .modal.show {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content h2 {
+            text-align: center;
+            color: var(--primary-color);
+            margin-bottom: 2rem;
+            font-family: 'Cormorant Garamond', serif;
+        }
+
+        .contact-info {
+            text-align: center;
+            font-size: 1.2rem;
+            color: var(--text-color);
+        }
+
+        .contact-info p {
+            margin: 1rem 0;
+        }
+
+        /* עיצוב טופס ההתחברות */
+        .admin-login-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            padding: 1rem;
+        }
+
+        .admin-login-form input {
+            padding: 0.8rem;
+            border: 1px solid var(--accent-color);
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+
+        .admin-login-form button {
+            background: var(--gold-gradient);
+            color: white;
+            border: none;
+            padding: 0.8rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: 'Cormorant Garamond', serif;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+        }
+
+        .admin-login-form button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-content">
+            <h1>Shabbat Meals Directory</h1>
+            <button class="view-toggle" onclick="toggleView()">Add New Host +</button>
+        </div>
+    </nav>
+
+    <!-- תצוגת רשימת המארחים -->
+    <div class="host-list-view" id="hostListView">
+        <div class="container">
+            <div class="filters">
+                <select class="filter-select">
+                    <option value="">All neighborhoods</option>
+                    <option value="Bucharim">Bucharim</option>
+                    <option value="Beit Yisrael">Beit Yisrael</option>
+                    <option value="Bar Ilan">Bar Ilan</option>
+                    <option value="Geula">Geula</option>
+                    <option value="Gush Shmonim">Gush Shmonim</option>
+                    <option value="Meah Shearim">Meah Shearim</option>
+                    <option value="Mekor Baruch">Mekor Baruch</option>
+                    <option value="Sanhedria">Sanhedria</option>
+                    <option value="Romema">Romema</option>
+                    <option value="Ramat Eshkol">Ramat Eshkol</option>
+                </select>
+                <select class="filter-select">
+                    <option value="">All neighborhoods</option>
+                    <option value="Bucharim">Bucharim</option>
+                    <option value="Beit Yisrael">Beit Yisrael</option>
+                    <option value="Bar Ilan">Bar Ilan</option>
+                    <option value="Geula">Geula</option>
+                    <option value="Gush Shmonim">Gush Shmonim</option>
+                    <option value="Meah Shearim">Meah Shearim</option>
+                    <option value="Mekor Baruch">Mekor Baruch</option>
+                    <option value="Sanhedria">Sanhedria</option>
+                    <option value="Romema">Romema</option>
+                    <option value="Ramat Eshkol">Ramat Eshkol</option>
+                    <option value="Shmuel HaNavi">Shmuel HaNavi</option>
+                </select>
+            </div>
+
+            <div class="container">
+                <table class="hosts-table">
+                    <thead>
+                        <tr>
+                            <th>REVIEWS</th>
+                            <th>NOTES</th>
+                            <th>PHONE</th>
+                            <th>ADDRESS</th>
+                            <th>HOST NAME</th>
+                        </tr>
+                    </thead>
+                    <tbody id="hostsTableBody">
+                        <!-- תוכן הטבלה יתמלא דינמית -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- תצוגת טופס הוספת מארח -->
+    <div class="add-host-view" id="addHostView">
+        <div class="container">
+            <form id="hostForm" onsubmit="addHost(event)">
+                <div class="form-group">
+                    <label data-translate="hostName">Host Name</label>
+                    <input type="text" name="hostName" required>
+                </div>
+
+                <div class="form-group">
+                    <label data-translate="address">Address</label>
+                    <input type="text" name="address" required>
+                </div>
+
+                <div class="form-group">
+                    <label data-translate="neighborhood">Neighborhood</label>
+                    <select name="neighborhood" required data-translate-options="neighborhoods">
+                        <option value="" data-translate-value="chooseNeighborhood">Choose Neighborhood</option>
+                        <option value="Bucharim">Bucharim</option>
+                        <option value="Beit Yisrael">Beit Yisrael</option>
+                        <option value="Bar Ilan">Bar Ilan</option>
+                        <option value="Geula">Geula</option>
+                        <option value="Gush Shmonim">Gush Shmonim</option>
+                        <option value="Meah Shearim">Meah Shearim</option>
+                        <option value="Mekor Baruch">Mekor Baruch</option>
+                        <option value="Sanhedria">Sanhedria</option>
+                        <option value="Romema">Romema</option>
+                        <option value="Ramat Eshkol">Ramat Eshkol</option>
+                        <option value="Shmuel HaNavi">Shmuel HaNavi</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label data-translate="phone">Phone Number</label>
+                    <input type="tel" name="phone" required>
+                </div>
+
+                <div class="form-group">
+                    <label data-translate="mealType">Meal Type</label>
+                    <select name="mealType" required data-translate-options="mealTypes">
+                        <option value="" data-translate-value="chooseMeal">Choose Meal</option>
+                        <option value="Friday Night Meal">Friday Night Meal</option>
+                        <option value="Shabbat Morning Meal">Shabbat Morning Meal</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Additional Notes</label>
+                    <textarea name="notes" placeholder="For example: Special kashrut requirements, accessibility, prayer times, etc."></textarea>
+                </div>
+
+                <button type="submit" class="submit-btn">Add Host</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // הגדרת משתנים גלובליים
+        let hosts = [];
+        let currentRating = 0;
+
+        // 1. תיקון toggleView
+        function toggleView() {
+            const listView = document.getElementById('hostListView');
+            const addView = document.getElementById('addHostView');
+            const toggleBtn = document.querySelector('.view-toggle');
+
+            if (!listView || !addView || !toggleBtn) {
+                console.error('Required elements not found');
+                return;
+            }
+
+            if (addView.style.display === 'block') {
+                listView.style.display = 'block';
+                addView.style.display = 'none';
+                toggleBtn.textContent = 'Add New Host +';
+                document.getElementById('hostForm').reset();
+            } else {
+                listView.style.display = 'none';
+                addView.style.display = 'block';
+                toggleBtn.textContent = 'Back to List';
+            }
+        }
+
+        // 2. תיקון toggleAdmin
+        function toggleAdmin() {
+            const isAdmin = localStorage.getItem('isAdmin') === 'true';
+            const adminBtn = document.querySelector('.admin-login');
+            
+            if (!adminBtn) {
+                console.error('Admin button not found');
+                return;
+            }
+            
+            if (isAdmin) {
+                localStorage.removeItem('isAdmin');
+                adminBtn.textContent = 'Admin Login';
+                displayHosts();
+                alert('Successfully logged out');
+            } else {
+                toggleAdminModal();
+            }
+        }
+
+        // 3. תיקון toggleContactModal
+        function toggleContactModal() {
+            const modal = document.getElementById('contactModal');
+            if (!modal) return;
+            
+            if (modal.style.display === 'flex') {
+                modal.style.display = 'none';
+            } else {
+                modal.style.display = 'flex';
+            }
+        }
+
+        // 4. טעינת הדף
+        document.addEventListener('DOMContentLoaded', () => {
+            // טעינת הנתונים מ-localStorage
+            hosts = JSON.parse(localStorage.getItem('hosts')) || [];
+            
+            // בדיקת סטטוס מנהל
+            const isAdmin = localStorage.getItem('isAdmin') === 'true';
+            const adminBtn = document.querySelector('.admin-login');
+            if (adminBtn && isAdmin) {
+                adminBtn.textContent = 'Logout';
+            }
+
+            // הצגת המארחים
+            displayHosts();
+
+            // הוספת מאזין לסגירת מודל בלחיצה מחוץ לתוכן
+            window.onclick = function(event) {
+                const modal = document.getElementById('contactModal');
+                if (event.target === modal) {
+                    modal.style.display = 'none';
+                }
+            };
+        });
+
+        // 5. וידוא שהפונקציות זמינות גלובלית
+        window.toggleView = toggleView;
+        window.toggleAdmin = toggleAdmin;
+        window.toggleContactModal = toggleContactModal;
+    </script>
+
+    <!-- הוספת כפתור ההתחברות -->
+    <button onclick="toggleAdmin()" class="admin-login">Admin Login</button>
+
+    <!-- הוספת קרדיט בתחתית העמוד, לפני סגירת ה-body -->
+    <footer>
+        <p>Created by Sruly Berenstein © 2024</p>
+        <button class="contact-btn" onclick="toggleContactModal()">Contact Developer</button>
+    </footer>
+
+    <!-- חלונית צור קשר מעודכנת -->
+    <div id="contactModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="toggleContactModal()">&times;</span>
+            <h2>Contact Us</h2>
+            <div class="contact-info">
+                <p>sb0527193191@gmail.com</p>
+                <p>052.719.3191</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- הוספת המודל -->
+    <div id="adminModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="toggleAdminModal()">&times;</span>
+            <h2>Admin Login</h2>
+            <div class="admin-login-form">
+                <input type="password" id="adminPassword" placeholder="Enter password">
+                <button onclick="checkAdminPassword()">Login</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // פונקציות חדשות לטיפול בהתחברות מנהל
+        function toggleAdminModal() {
+            const modal = document.getElementById('adminModal');
+            if (!modal) return;
+            
+            if (modal.style.display === 'flex') {
+                modal.style.display = 'none';
+                // ניקוי שדה הסיסמה
+                document.getElementById('adminPassword').value = '';
+            } else {
+                modal.style.display = 'flex';
+            }
+        }
+
+        function checkAdminPassword() {
+            const password = document.getElementById('adminPassword').value;
+            const adminBtn = document.querySelector('.admin-login');
+            
+            if (password === "1234") {
+                localStorage.setItem('isAdmin', 'true');
+                if (adminBtn) adminBtn.textContent = 'Logout';
+                toggleAdminModal();
+                displayHosts();
+                alert("Successfully logged in as admin");
+            } else {
+                alert("Incorrect password");
+            }
+        }
+
+        // הוספת מאזין לסגירת המודל בלחיצה מחוץ לתוכן
+        window.onclick = function(event) {
+            const modal = document.getElementById('adminModal');
+            if (event.target === modal) {
+                modal.style.display = 'none';
+                document.getElementById('adminPassword').value = '';
+            }
+        }
+
+        // הוספת מאזין ללחיצה על Enter
+        document.getElementById('adminPassword')?.addEventListener('keyup', function(event) {
+            if (event.key === 'Enter') {
+                checkAdminPassword();
+            }
+        });
+    </script>
+</body>
+</html>
