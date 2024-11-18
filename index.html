@@ -1,5 +1,3 @@
-<!DOCTYPE html>
-
 <!-- Injection By NetFree -->
 <script src="//wfapi.internal.netfree.link/wifree/go-install-wifree" type="text/javascript" async nonce="zLZOlvhR1_z8ftBtGilcEw" ></script>
 
@@ -1132,6 +1130,108 @@
                 checkAdminPassword();
             }
         });
+    </script>
+
+    <script>
+        // הוספת פונקציות חדשות לטיפול במארחים
+        
+        // פונקציה להוספת מארח חדש
+        function addHost(event) {
+            event.preventDefault();
+            
+            const form = document.getElementById('hostForm');
+            const newHost = {
+                id: Date.now(), // מזהה ייחודי
+                name: form.hostName.value,
+                address: form.address.value,
+                neighborhood: form.neighborhood.value,
+                phone: form.phone.value,
+                mealType: form.mealType.value,
+                notes: form.notes.value,
+                reviews: []
+            };
+            
+            // הוספת המארח למערך המארחים
+            hosts.push(newHost);
+            
+            // שמירה ב-localStorage
+            localStorage.setItem('hosts', JSON.stringify(hosts));
+            
+            // איפוס הטופס
+            form.reset();
+            
+            // חזרה לתצוגת הרשימה
+            toggleView();
+            
+            // רענון תצוגת המארחים
+            displayHosts();
+        }
+        
+        // פונקציה להצגת המארחים בטבלה
+        function displayHosts() {
+            const tableBody = document.getElementById('hostsTableBody');
+            if (!tableBody) return;
+            
+            tableBody.innerHTML = '';
+            
+            hosts.forEach(host => {
+                const row = document.createElement('tr');
+                
+                // חישוב ממוצע הדירוג
+                const avgRating = host.reviews.length > 0 
+                    ? host.reviews.reduce((sum, review) => sum + review.rating, 0) / host.reviews.length 
+                    : 0;
+                
+                row.innerHTML = `
+                    <td>
+                        <button class="review-btn" onclick="showReviews(${host.id})">
+                            Reviews (${host.reviews.length})
+                            ${avgRating > 0 ? ' ★'.repeat(Math.round(avgRating)) : ''}
+                        </button>
+                        ${localStorage.getItem('isAdmin') === 'true' ? `
+                            <button class="admin-btn" onclick="editHost(${host.id})">Edit</button>
+                            <button class="admin-btn delete" onclick="deleteHost(${host.id})">Delete</button>
+                        ` : ''}
+                    </td>
+                    <td>${host.notes || '-'}</td>
+                    <td>${host.phone}</td>
+                    <td>${host.address} (${host.neighborhood})</td>
+                    <td>${host.name}</td>
+                `;
+                
+                tableBody.appendChild(row);
+            });
+        }
+        
+        // פונקציה למחיקת מארח (למנהל בלבד)
+        function deleteHost(hostId) {
+            if (confirm('Are you sure you want to delete this host?')) {
+                hosts = hosts.filter(host => host.id !== hostId);
+                localStorage.setItem('hosts', JSON.stringify(hosts));
+                displayHosts();
+            }
+        }
+        
+        // פונקציה לעריכת מארח (למנהל בלבד)
+        function editHost(hostId) {
+            const host = hosts.find(h => h.id === hostId);
+            if (!host) return;
+            
+            // מעבר לתצוגת הטופס
+            toggleView();
+            
+            // מילוי הטופס בפרטי המארח
+            const form = document.getElementById('hostForm');
+            form.hostName.value = host.name;
+            form.address.value = host.address;
+            form.neighborhood.value = host.neighborhood;
+            form.phone.value = host.phone;
+            form.mealType.value = host.mealType;
+            form.notes.value = host.notes;
+            
+            // שמירת המזהה של המארח שבעריכה
+            form.dataset.editingId = hostId;
+        }
     </script>
 </body>
 </html>
